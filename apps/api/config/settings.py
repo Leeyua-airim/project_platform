@@ -11,6 +11,9 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 if not SECRET_KEY:
     raise RuntimeError("DJANGO_SECRET_KEY is not set")
 
+DJANGO_DEBUG = os.environ.get("DJANGO_DEBUG", "0")
+DEBUG = DJANGO_DEBUG == "1"
+
 REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 
 # 로컬 기본값은 localhost Redis, Render에서는 REDIS_URL을 환경변수로 주입하면 그대로 사용 가능.
