@@ -1,0 +1,9 @@
+{
+  "name": "platform_git",
+  "private": true,
+  "packageManager": "pnpm@10.30.3",
+  "scripts": {
+    "dev:web": "pnpm --filter @pp/web dev",
+    "build:web": "pnpm --filter @pp/web build"
+  }
+}
