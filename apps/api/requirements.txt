@@ -9,6 +9,7 @@ click-repl==0.3.0
 Django==5.2.12
 django-cors-headers==4.9.0
 djangorestframework==3.16.1
+gunicorn==25.1.0
 kombu==5.6.2
 packaging==26.0
 prompt_toolkit==3.0.52
