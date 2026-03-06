@@ -23,7 +23,7 @@ CELERY_TIMEZONE = "Asia/Seoul"
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["project-platform-81bi.onrender.com", ".onrender.com"]
 
 
 # Application definition
