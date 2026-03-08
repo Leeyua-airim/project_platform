@@ -1,3 +1,4 @@
+# apps/api/config/settings.py
 from pathlib import Path
 from dotenv import load_dotenv  
 
@@ -24,9 +25,13 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Asia/Seoul"
 
-DEBUG = True
+DJANGO_DEBUG = os.environ.get("DJANGO_DEBUG", "0")
+DEBUG = DJANGO_DEBUG == "1"
 
-ALLOWED_HOSTS = ["project-platform-81bi.onrender.com", ".onrender.com"]
+ALLOWED_HOSTS = ["project-platform-81bi.onrender.com", 
+                 ".onrender.com", 
+                 "127.0.0.1",
+                 "localhost",]
 
 
 # Application definition
@@ -42,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'core',
+    'users',
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -81,9 +87,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -92,8 +95,26 @@ DATABASES = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+# DRF 기본 인증/권한 설정
+# 모든 API 요청은 기본적으로 Supabase JWT 인증을 거치도록 설정
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "common.authentication.SupabaseJWTAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
+
+# Supabase 프로젝트 URL
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
+
+# Supabase가 공개하는 JWKS 주소
+# Django는 이 주소의 공개키로 access token 서명을 검증함
+SUPABASE_JWKS_URL = os.environ.get(
+    "SUPABASE_JWKS_URL",
+    f"{SUPABASE_URL}/auth/v1/.well-known/jwks.json" if SUPABASE_URL else "",
+)
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -111,24 +132,16 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
 STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

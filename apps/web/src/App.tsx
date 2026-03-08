@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "./lib/supabaseClient";
+import { fetchMe } from "./lib/api"; // 추가
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
+  const [meResult, setMeResult] = useState<unknown>(null); // 추가
+  const [meError, setMeError] = useState(""); // 추가
   const email = session?.user?.email ?? "";
 
   useEffect(() => {
@@ -31,6 +34,20 @@ export default function App() {
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) alert(error.message);
+
+    setMeResult(null); // 추가
+    setMeError(""); // 추가
+  };
+
+  const handleTestMe = async () => { // 추가
+    try {
+      const data = await fetchMe();
+      setMeResult(data);
+      setMeError("");
+    } catch (error) {
+      setMeResult(null);
+      setMeError(error instanceof Error ? error.message : "Unknown error");
+    }
   };
 
   return (
@@ -46,6 +63,12 @@ export default function App() {
         <>
           <p>로그인됨: {email}</p>
           <button onClick={signOut}>로그아웃</button>
+          <button onClick={handleTestMe} style={{ marginLeft: 8 }}>
+            /api/me 테스트
+          </button>
+
+          {meError ? <pre>{meError}</pre> : null}
+          {meResult ? <pre>{JSON.stringify(meResult, null, 2)}</pre> : null}
         </>
       )}
     </div>
